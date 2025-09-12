@@ -274,7 +274,7 @@ def setup_mcp_server(hexstrike_client: HexStrikeClient) -> FastMCP:
     Returns:
         Configured FastMCP instance
     """
-    mcp = FastMCP("hexstrike-ai-mcp")
+    mcp = FastMCP("hexstrike-ai-mcp", host="127.0.0.1", port=1234, streamable_http_path="/")
 
     # ============================================================================
     # CORE NETWORK SCANNING TOOLS
