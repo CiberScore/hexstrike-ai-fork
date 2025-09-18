@@ -29,8 +29,6 @@ jobs_lock = asyncio.Lock()
 EXECUTOR_MAX_WORKERS = 4
 executor: Optional[ThreadPoolExecutor] = None
 
-DEFAULT_JOB_TIMEOUT = 60 * 10
-
 
 class RunRequest(BaseModel):
     target: str
@@ -94,7 +92,6 @@ async def run(req: RunRequest):
         "started_at": None,
         "finished_at": None,
         "output": None,
-        "timeout": req.timeout or DEFAULT_JOB_TIMEOUT,
     }
 
     async with jobs_lock:

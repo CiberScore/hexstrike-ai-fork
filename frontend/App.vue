@@ -95,8 +95,7 @@ async function startScan() {
 
   try {
     const body = {
-      target: target.value,
-      timeout: 600
+      target: target.value
     };
 
     const res = await fetch(`${API_BASE}/startpentest`, {
