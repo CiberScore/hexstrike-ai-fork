@@ -1,3 +1,6 @@
+fastapi
+pydantic
+uvicorn
 # HexStrike AI MCP Agents v6.0
 #
 # INSTALLATION COMMANDS:
