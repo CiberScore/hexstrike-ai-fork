@@ -60,17 +60,17 @@ async def _set_job_status(job_id: str, **kwargs):
         job.update(kwargs)
 
 
-async def _run_agent_in_background(job_id: str, target: str, timeout: int):
+async def _run_agent_in_background(job_id: str, target: str):
 
     await _set_job_status(job_id, status="running", started_at=datetime.utcnow().isoformat())
     loop = asyncio.get_running_loop()
 
     try:
         coro = loop.run_in_executor(executor, ciberscore_pentest_agent.start_pentest, target)
-        result = await asyncio.wait_for(coro, timeout=timeout)
+        result = await asyncio.wait_for(coro,172800) # 2 days by the moment
         await _set_job_status(job_id, status="done", output=result, finished_at=datetime.utcnow().isoformat())
     except asyncio.TimeoutError:
-        tb = f"Job timed out after {timeout} seconds."
+        tb = f"Job timed out "
         await _set_job_status(job_id, status="failed", output=tb, finished_at=datetime.utcnow().isoformat())
     except Exception as e:
         tb = traceback.format_exc()
@@ -97,7 +97,7 @@ async def run(req: RunRequest):
     async with jobs_lock:
         jobs[job_id] = job_record
 
-    asyncio.create_task(_run_agent_in_background(job_id, req.target, job_record["timeout"]))
+    asyncio.create_task(_run_agent_in_background(job_id, req.target))
 
     return RunResponse(job_id=job_id)
 
@@ -116,7 +116,6 @@ async def get_result(job_id: str):
             "started_at": job["started_at"],
             "finished_at": job["finished_at"],
             "output": job["output"],
-            "timeout": job["timeout"],
         }
 
 
