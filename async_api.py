@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-import ciberscore_pentest_agent
+import ciberscore_pentest_ollama_agent
 
 app = FastAPI(title="Async Agent API")
 FRONTEND_ORIGIN = "http://192.168.10.165:5173"
@@ -66,7 +66,7 @@ async def _run_agent_in_background(job_id: str, target: str):
     loop = asyncio.get_running_loop()
 
     try:
-        coro = loop.run_in_executor(executor, ciberscore_pentest_agent.start_pentest, target)
+        coro = loop.run_in_executor(executor, ciberscore_pentest_ollama_agent.start_pentest, target)
         result = await asyncio.wait_for(coro,172800) # 2 days by the moment
         await _set_job_status(job_id, status="done", output=result, finished_at=datetime.utcnow().isoformat())
     except asyncio.TimeoutError:
